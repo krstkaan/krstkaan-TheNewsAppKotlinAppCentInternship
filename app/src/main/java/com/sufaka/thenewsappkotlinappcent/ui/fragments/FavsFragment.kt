@@ -1,60 +1,86 @@
 package com.sufaka.thenewsappkotlinappcent.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.sufaka.thenewsappkotlinappcent.R
+import com.sufaka.thenewsappkotlinappcent.adapters.NewsAdapter
+import com.sufaka.thenewsappkotlinappcent.databinding.FragmentFavsBinding
+import com.sufaka.thenewsappkotlinappcent.ui.NewsActivity
+import com.sufaka.thenewsappkotlinappcent.ui.NewsViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FavsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class FavsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class FavsFragment : Fragment(R.layout.fragment_favs) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    lateinit var newsViewModel: NewsViewModel
+    lateinit var newsAdapter: NewsAdapter
+    lateinit var binding: FragmentFavsBinding
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding= FragmentFavsBinding.bind(view)
+
+
+
+        newsViewModel = (activity as NewsActivity).newsViewModel
+        setupRecyclerView()
+
+        newsAdapter.setOnItemClickListener {
+            val bundle = Bundle().apply {
+                putSerializable("article", it)
+
+            }
+            findNavController().navigate(R.id.action_favsFragment_to_articleFragment, bundle)
+
+        }
+        val itemTouchHelperCallBack = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+        {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val article = newsAdapter.differ.currentList[position]
+                newsViewModel.deleteArticle(article)
+                Snackbar.make(view, "The favorite news is deleted", Snackbar.LENGTH_SHORT).apply {
+                    setAction("Undo") {
+                        newsViewModel.addToFavorites(article)
+                    }
+                    show()
+                }
+            }
+        }
+        ItemTouchHelper(itemTouchHelperCallBack).apply {
+            attachToRecyclerView(binding.recyclerFavorites)
+        }
+        newsViewModel.getFavoriteNews().observe(viewLifecycleOwner, Observer { articles ->
+            newsAdapter.differ.submitList(articles)
+        })
+    }
+    private fun setupRecyclerView() {
+        newsAdapter = NewsAdapter()
+        binding.recyclerFavorites.apply {
+            adapter = newsAdapter
+            layoutManager = LinearLayoutManager(activity)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favs, container, false)
-    }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FavsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FavsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }

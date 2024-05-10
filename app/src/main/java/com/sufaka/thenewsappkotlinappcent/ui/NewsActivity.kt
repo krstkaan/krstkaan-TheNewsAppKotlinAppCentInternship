@@ -13,7 +13,7 @@ import com.sufaka.thenewsappkotlinappcent.database.ArticleDatabase
 import com.sufaka.thenewsappkotlinappcent.databinding.ActivityNewsBinding
 import com.sufaka.thenewsappkotlinappcent.repos.NewsRepository
 
-class NewsActivity : AppCompatActivity() {
+class NewsActivity : AppCompatActivity(R.layout.activity_news) {
     lateinit var newsViewModel: NewsViewModel
     lateinit var binding: ActivityNewsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
