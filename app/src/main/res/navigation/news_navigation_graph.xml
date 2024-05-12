@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/news_navigation_graph"
-    app:startDestination="@id/newsFragment2">
+    app:startDestination="@id/newsFragment">
 
     <fragment
         android:id="@+id/articleFragment"
@@ -11,33 +12,54 @@
         <argument
             android:name="article"
             app:argType="com.sufaka.thenewsappkotlinappcent.models.Article" />
+        <action
+            android:id="@+id/action_articleFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+        <action
+            android:id="@+id/action_articleFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
 
     </fragment>
 
 
 
     <fragment
-        android:id="@+id/favsFragment"
+        android:id="@+id/favoriteFragment"
         android:name="com.sufaka.thenewsappkotlinappcent.ui.fragments.FavsFragment"
         android:label="FavsFragment" >
         <action
-            android:id="@+id/action_favsFragment_to_articleFragment"
-            app:destination="@id/articleFragment" />
+            android:id="@+id/action_favoriteFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
     </fragment>
     <fragment
-        android:id="@+id/newsFragment2"
+        android:id="@+id/newsFragment"
         android:name="com.sufaka.thenewsappkotlinappcent.ui.fragments.NewsFragment"
-        android:label="NewsFragment" >
+        android:label="NewsFragment">
         <action
-            android:id="@+id/action_newsFragment2_to_articleFragment"
+            android:id="@+id/action_newsFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+        <action
+            android:id="@+id/action_newsFragment_to_articleFragment"
             app:destination="@id/articleFragment" />
     </fragment>
     <fragment
-        android:id="@+id/searchFragment2"
+        android:id="@+id/searchFragment"
         android:name="com.sufaka.thenewsappkotlinappcent.ui.fragments.SearchFragment"
         android:label="SearchFragment" >
         <action
-            android:id="@+id/action_searchFragment2_to_articleFragment"
+            android:id="@+id/action_searchFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contentFragment"
+        android:name="com.sufaka.thenewsappkotlinappcent.ui.fragments.ContentFragment"
+        android:label="fragment_content"
+        tools:layout="@layout/fragment_content" >
+        <action
+            android:id="@+id/action_contentFragment_to_articleFragment"
             app:destination="@id/articleFragment" />
+        <action
+            android:id="@+id/action_contentFragment_to_newsFragment"
+            app:destination="@id/newsFragment" />
     </fragment>
 </navigation>

@@ -24,28 +24,25 @@ class FavsFragment : Fragment(R.layout.fragment_favs) {
     lateinit var newsViewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
     lateinit var binding: FragmentFavsBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding= FragmentFavsBinding.bind(view)
-
-
+        binding = FragmentFavsBinding.bind(view)
 
         newsViewModel = (activity as NewsActivity).newsViewModel
-        setupRecyclerView()
+        setupFavouritesRecycler()
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("article", it)
-
             }
-            findNavController().navigate(R.id.action_favsFragment_to_articleFragment, bundle)
-
+            findNavController().navigate(R.id.action_favoriteFragment_to_contentFragment, bundle)
         }
-        val itemTouchHelperCallBack = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
 
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
-        {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -58,29 +55,29 @@ class FavsFragment : Fragment(R.layout.fragment_favs) {
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.differ.currentList[position]
                 newsViewModel.deleteArticle(article)
-                Snackbar.make(view, "The favorite news is deleted", Snackbar.LENGTH_SHORT).apply {
-                    setAction("Undo") {
+                Snackbar.make(view, "Removed from favourites", Snackbar.LENGTH_LONG).apply {
+                    setAction("Undo"){
                         newsViewModel.addToFavorites(article)
                     }
                     show()
                 }
             }
         }
-        ItemTouchHelper(itemTouchHelperCallBack).apply {
+
+        ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(binding.recyclerFavorites)
         }
+
         newsViewModel.getFavoriteNews().observe(viewLifecycleOwner, Observer { articles ->
             newsAdapter.differ.submitList(articles)
         })
     }
-    private fun setupRecyclerView() {
+
+    private fun setupFavouritesRecycler() {
         newsAdapter = NewsAdapter()
         binding.recyclerFavorites.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
     }
-
-
-
 }
