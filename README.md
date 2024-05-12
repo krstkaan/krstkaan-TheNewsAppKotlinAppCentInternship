@@ -8,7 +8,7 @@
 Here're some of the project's best features:
 
 *   Bookmark news
-*   Browse News
+*   Search News
 *   View in App & WebView
 *   Share news with friends
 
