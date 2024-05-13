@@ -26,7 +26,8 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
 
         newsViewModel = (activity as NewsActivity).newsViewModel
         val article = args.article
-        binding.webView.apply {
+        binding.webView.apply {//webView is the id of the WebView in the layout
+            //webViewClient is used to handle the navigation of the WebView
             webViewClient = WebViewClient()
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
@@ -66,7 +67,7 @@ class ArticleFragment : Fragment(R.layout.fragment_article) {
         val makeFavBTN = view.findViewById<ImageView>(R.id.makeFavBTN)
         makeFavBTN.setOnClickListener {
             newsViewModel.addToFavorites(article)
-            Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, "Added to favorites", Snackbar.LENGTH_SHORT).show()
         }
 
 

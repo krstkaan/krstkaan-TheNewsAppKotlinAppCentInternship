@@ -55,7 +55,7 @@ class FavsFragment : Fragment(R.layout.fragment_favs) {
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.differ.currentList[position]
                 newsViewModel.deleteArticle(article)
-                Snackbar.make(view, "Removed from favourites", Snackbar.LENGTH_LONG).apply {
+                Snackbar.make(view, "Removed from favorites", Snackbar.LENGTH_LONG).apply {
                     setAction("Undo"){
                         newsViewModel.addToFavorites(article)
                     }

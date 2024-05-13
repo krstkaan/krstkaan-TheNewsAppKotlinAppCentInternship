@@ -77,7 +77,7 @@ class ContentFragment : Fragment(R.layout.fragment_content) {
         val makeFavBTN = view.findViewById<ImageView>(R.id.makeFavBTN)
         makeFavBTN.setOnClickListener {
             newsViewModel.addToFavorites(article)
-            Snackbar.make(view, "Added to favourites", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, "Added to favorites", Snackbar.LENGTH_SHORT).show()
         }
 
         val goSourceBTN = view.findViewById<Button>(R.id.goSourceBTN)
