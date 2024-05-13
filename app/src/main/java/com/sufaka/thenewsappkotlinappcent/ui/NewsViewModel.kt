@@ -12,9 +12,11 @@ import com.sufaka.thenewsappkotlinappcent.models.NewsResponse
 import com.sufaka.thenewsappkotlinappcent.repos.NewsRepository
 import com.sufaka.thenewsappkotlinappcent.util.Resource
 import kotlinx.coroutines.launch
-import okio.IOException
+import retrofit2.Response
+import java.io.IOException
 
-class NewsViewModel(app: Application, val newsRepository: NewsRepository): AndroidViewModel(app) {
+
+class NewsViewModel(app: Application, val newsRepository: NewsRepository) : AndroidViewModel(app) {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var breakingNewsPage = 1
@@ -30,44 +32,60 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     init {
         getBreakingNews("us")
     }
-fun getBreakingNews(countryCode: String) = viewModelScope.launch {
+
+    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
         breakingNewsInternet(countryCode)
     }
+
     fun searchNews(searchQuery: String) = viewModelScope.launch {
         searchNewsInternet(searchQuery)
     }
 
 
     // This function is used to get breaking news from the API
-    private fun handleBreakingNewsResponse(response: retrofit2.Response<NewsResponse>): Resource<NewsResponse> {
+    private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
-            response.body()?.let { result ->
+            response.body()?.let { resultResponse ->
                 breakingNewsPage++
                 if (breakingNewsResponse == null) { // if the response is null then we will assign the result to breakingNewsResponse
-                    breakingNewsResponse = result
+                    breakingNewsResponse = resultResponse
                 } else { // if the response is not null then we will add the new articles to the old articles
                     val oldArticles = breakingNewsResponse?.articles
-                    val newArticles = result.articles
+                    val newArticles = resultResponse.articles
                     oldArticles?.addAll(newArticles)
                 }
-                return Resource.Success(breakingNewsResponse ?: result)
+                return Resource.Success(breakingNewsResponse ?: resultResponse)
             }
         }
         return Resource.Error(response.message())
     }
 
-    private fun handleSearchNewsResponse(response: retrofit2.Response<NewsResponse>): Resource<NewsResponse> {
-        if (response.isSuccessful) {
-            response.body()?.let { result ->
-                searchNewsPage++
-                if (searchNewsResponse == null || newSearchQuery != oldSearchQuery) { // if the response is null then we will assign the result to searchNewsResponse
-                    searchNewsResponse = result
-                } else { // if the response is not null then we will add the new articles to the old articles
+    private fun handleSearchNewsResponse(response: Response<NewsResponse>) : Resource<NewsResponse> {
+
+        if(response.isSuccessful) {
+
+            response.body()?.let { resultResponse ->
+
+                if(searchNewsResponse == null || newSearchQuery != oldSearchQuery) {
+
+                    searchNewsPage = 1
+
+                    oldSearchQuery = newSearchQuery
+
+                    searchNewsResponse = resultResponse
+
+                } else {
+
+                    searchNewsPage++
+
                     val oldArticles = searchNewsResponse?.articles
-                    val newArticles = result.articles
+
+                    val newArticles = resultResponse.articles
+
                     oldArticles?.addAll(newArticles)
+
                 }
-                return Resource.Success(searchNewsResponse ?: result)
+                return Resource.Success(searchNewsResponse ?: resultResponse)
             }
         }
         return Resource.Error(response.message())

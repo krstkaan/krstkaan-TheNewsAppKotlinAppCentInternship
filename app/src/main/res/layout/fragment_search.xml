@@ -33,6 +33,8 @@
         android:drawableTint="@color/orange"
         android:background="@drawable/search_border"
         android:drawableEnd="@drawable/baseline_search_24"
+android:imeOptions="actionSearch"
+     android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
