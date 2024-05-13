@@ -25,6 +25,7 @@ Technologies used in the project:
 *   LiveData
 *   ViewModel
 *   Coroutines
+*   NewsApi
 
 <h2>Project Screenshots:</h2>
 
